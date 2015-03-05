@@ -75,11 +75,12 @@ If you examine your database in pgAdmin III, you should see 10 new tables. At th
 
 In general, the test-driven development workflow follows these steps:
 
-1. Wireframe a simple model of our application or feature.
-2. Write a story that narrates a user experience.
-3. Write a functional test that follows the actions taken in the user story.
-4. Write unit tests to evaluate the operability of low-level code.
-5. Write code that satisfies the tests.
+1. Write a short story that captures what a user needs to complete a requirement.
+2. Wireframe a simple model of an application or feature that meets the requirement.
+3. Write a use case that narrates a scenario based on the wireframe.
+4. Write a functional test that follows the actions outlined in the use case.
+5. Write unit tests to evaluate the operability of low-level code.
+6. Write functional code that satisfies the tests.
 
 These are the critical tenets of test-driven development:
 
@@ -87,11 +88,17 @@ These are the critical tenets of test-driven development:
 * Write the **minimum** amount of code necessary to make a test pass.
 * When a test passes, restart the process or refactor the code if necessary.
 
-### Wireframing Our Application
+### Writing a User Story
+
+Conventionally, the user story should be short enough to be written on a notecard. It is written in the language of the client and avoids the use of technical vocabulary. Here is our user story:
+
+> John wants an application that allows him to manage a list of organizations.
+
+### Wireframing an Application
 
 Our application will consist of two pages, a _home page_ that lists organizations and a _create page_ that generates new organizations. Sketch a simple layout of the application and make sure to include components and page states. See the attached document for an example of an application wireframe created with MockFlow.
 
-### Writing Our User Story
+### Writing a Use Case
 
 Use our wireframe to imagine how the typical user will interact with our application. Follow along with this outline of an expected user experience:
 
@@ -99,7 +106,7 @@ Use our wireframe to imagine how the typical user will interact with our applica
 
 ### Writing a Functional Test
 
-A functional test (acceptance test) follows the scenario laid out in a user story. It evaluates the system from the user's point of view. Functional tests are helpful because they allow us to mimic the behavior of a real user, and they can be repeated consistently over time. Do not write exhaustive functional tests that touch every possible interaction and cover every single outcome that can occur within a system. Instead, focus on the important aspects of a user experience, and write tests that encompass the most popular and direct set of actions that a user is expected to follow. In practice, a separate quality assurance (QA) team should evaluate the application for bugs.
+A functional test (acceptance test) follows the scenario laid out in a user case. It evaluates the system from the user's point of view. Functional tests are helpful because they allow us to mimic the behavior of a real user, and they can be repeated consistently over time. Do not write exhaustive functional tests that touch every possible interaction and cover every single outcome that can occur within a system. Instead, focus on the important aspects of a user experience, and write tests that encompass the most popular and direct set of actions that a user is expected to follow. In practice, a separate quality assurance (QA) team should evaluate the application for bugs.
 
 Leverage software like Selenium to drive the functional tests in Django. Selenium provides functionality that allows automated tests to interact with a browser in an authentic way. Examples include opening and closing browser windows, navigating to URLs, and interacting with on-screen components using mouse and keyboard events like a human user.
 
@@ -154,7 +161,7 @@ In Django, functional tests extend the `django.test.LiveServerTestCase` class. U
 (tutorial)macbook:tutorial carneyadmin$ python manage.py test functional_tests
 ```
 
-The functional tests run successfully with no failures. In fact, we have not actually programmed any tests yet. Create a functional test that follows that actions narrated by the user story. In the example below, the user story is broken into digestible instructions that guide our development.
+The functional tests run successfully with no failures. In fact, we have not actually programmed any tests yet. Create a functional test that follows that actions narrated by the use case. In the example below, the use case is broken into digestible instructions that guide our development.
 
 ```python
 # functional_tests/test_organizations.py
@@ -196,7 +203,7 @@ Our functional test is pretty simple: 14 lines of code and 5 assertions. Every t
 * The browser enters an organization name into the text field and clicks the submit button.
 * At this point, the client should return to the home page and the browser checks to make sure the table contains a row with the name of the organization added on the previous page.
 
-Notice how this test combines the user story and the wireframe. Run the functional test again and see what happens.
+Notice how this test combines the use case and the wireframe. Run the functional test again and see what happens.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py test functional_tests
@@ -214,7 +221,6 @@ Let's create a new Django app called organizations. We're creating a new app ins
 (tutorial)macbook:tutorial carneyadmin$ python manage.py startapp organizations
 ```
 
-
 You'll notice that your Django project is updated in PyCharm. Open your project settings and add organizations as an installed local app. This action configures and registers the module with Django, so that the URLs, views, forms, models, etc. are accessible throughout the project.
 
 ```python
@@ -225,7 +231,6 @@ LOCAL_APPS = (
     'organizations',
 )
 ```
-
 
 Inside the organizations folder, delete the tests.py file and create a Python directory called tests. Create a new Python file called test_views and place it in the tests folder. This is where our unit tests will live. Add the code shown below to create a unit test class for our views.
 
@@ -241,19 +246,13 @@ class HomeViewTest(TestCase):
         self.client = Client()
 ```
 
-
 This class creates a test case and sets up each test method to use a fake client that will interact with the framework as if it were real. Remember, this is the basic way that Django works:
 
 1. A web client sends an HTTP request to the server.
-
 2. The server passes the request to the Django web framework.
-
 3. Django parses the URL from the request and resolves it to an associated view method.
-
 4. The view processes some code that usually involves communicating with a database and then returns an HTTP response.
-
 5. The response typically contains a string of HTML text, which is usually rendered from a template.
-
 6. The web client receives the response and displays the content as a web page.
 
 Let's test out our new unit test.
@@ -261,7 +260,6 @@ Let's test out our new unit test.
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py test organizations
 ```
-
 
 Our tests are working.
 
@@ -274,7 +272,6 @@ def test_view_renders_template(self):
     response = self.client.get('/')
     self.assertTemplateUsed(response, 'organizations/home.html')
 ```
-
 
 In this test, we are simulating a call to the home page and are confirming that we are rendering the expected template. When we run the unit tests, they fail. Remember that's a good thing! Now, let's write the minimum amount of code necessary to make this test pass. The first thing we need is a template. Create a templates/organizations directory in your organizations folder. Create a simple HTML file in the new directory and name it home.
 
@@ -295,7 +292,6 @@ In this test, we are simulating a call to the home page and are confirming that 
 </html>
 ```
 
-
 Next, open the views.py file from the organizations folder. Add the minimum amount of code necessary to render the template.
 
 ```python
@@ -304,7 +300,6 @@ Next, open the views.py file from the organizations folder. Add the minimum amou
 def home_view(request):
     return render(request, 'organizations/home.html')
 ```
-
 
 Lastly, open the urls.py folder in the tutorial folder and adjust the URL configuration as shown.
 
@@ -319,7 +314,6 @@ urlpatterns = patterns('organizations.views',
 )
 ```
 
-
 Run the unit tests again. They pass! Let's try the functional tests again. They fail with the same error as before, but at least we're actually rendering the expected web page. This is a good time for a commit. Look at the status of the project and then add and commit all of our new and modified files.
 
 ```bash
@@ -327,7 +321,6 @@ Run the unit tests again. They pass! Let's try the functional tests again. They 
 (tutorial)macbook:tutorial carneyadmin$ git add .
 (tutorial)macbook:tutorial carneyadmin$ git commit -m "Added functional tests and organizations."
 ```
-
 
 ## Exploring the Test-Driven Development Process
 
@@ -345,7 +338,6 @@ At this point, we've gotten a taste of how the basic flow of TDD works. We've cr
 </body>
 ```
 
-
 Run the functional tests. They fail again, but notice that we have a new error! We've moved a step forward. Now, the create button cannot be found. Let's return to the template.
 
 ```html
@@ -360,7 +352,6 @@ Run the functional tests. They fail again, but notice that we have a new error! 
     </table>
 </body>
 ```
-
 
 Run the functional tests. We've progressed a little more! Now, the test cannot find the text input control, but if we look at the user story, we realize the test fails because the page never changes. If we look at our wireframe, we can see that we need a second page, the create page. Let's follow the same steps as when we created the home page. First, create a unit test. Notice how we use a new test case for a new view.
 
@@ -398,7 +389,6 @@ Next, we follow the same steps for creating the URL, view, and template as we di
 </html>
 ```
 
-
 Create the other Django files.
 
 ```python
@@ -410,7 +400,6 @@ def create_view(request):
     return render(request, 'organizations/create.html')
 ```
 
-
 ```python
 # tutorial/urls.py
 
@@ -420,7 +409,6 @@ urlpatterns = patterns('organizations.views',
 )
 ```
 
-
 Run the unit tests. They passed! Now that we have a working web page, we can link to it in the home template.
 
 ```html
@@ -428,7 +416,6 @@ Run the unit tests. They passed! Now that we have a working web page, we can lin
 
 <a id="create-button" href="{% url 'create' %}">Create organization</a>
 ```
-
 
 Run the functional tests again. We can see the browser navigate to the create page, so we've passed one more hurdle. The tests fail because the text input field cannot be found. Let's add it.
 
@@ -438,7 +425,6 @@ Run the functional tests again. We can see the browser navigate to the create pa
 <input type="text" name="name" placeholder="Organization name">
 ```
 
-
 Remember, we just want the minimum amount of code necessary to move forward in the test. Don't get ahead of yourself! The functional tests fail, but we've progressed one more step. We need the submit button.
 
 ```html
@@ -447,14 +433,12 @@ Remember, we just want the minimum amount of code necessary to move forward in t
 <button id="submit">Submit</button>
 ```
 
-
 We've taken another step! Again the test is failing because it cannot find an element, but we know that the real reason is because the page hasn't navigated back home yet. Before we do anything else, let's commit our changes.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ git add .
 (tutorial)macbook:tutorial carneyadmin$ git commit -m "Home and create pages rendering correctly."
 ```
-
 
 We need our application to return to the home page after a post request. Let's create a new unit test.
 
@@ -468,7 +452,6 @@ class CreateViewTest(TestCase):
         response = self.client.post('/create/')
         self.assertRedirects(response, '/')
 ```
-
 
 The unit test fails, so let's make it pass.
 
@@ -487,7 +470,6 @@ def create_view(request):
     return render(request, 'organizations/create.html')
 ```
 
-
 The unit test passes. The functional tests are still failing because we haven't actually added any posting behavior to our controls yet. Let's upgrade our template, so that it actually uses a form. Remember that all post calls need a CSRF token.
 
 ```html
@@ -499,7 +481,6 @@ The unit test passes. The functional tests are still failing because we haven't 
     <button id="submit" type="submit">Submit</button>
 </form>
 ```
-
 
 That gets the functional test moving ahead to the next failure. The new organization we created should be displayed in the list, but its not. It's time for some more advanced testing. We need to employ the use of models if we want to save our organizations. We'll have to pull the name of an organization from the post data that comes in when the form is submitted. Next, we'll need to save the organization with the given name. Lastly, we'll have to supply the home page with a list of organizations. That's a tall order. Let's get started with some unit tests.
 
@@ -517,7 +498,6 @@ class HomeViewTest(TestCase):
         self.assertListEqual(response.context['organizations'], [organization])
 ```
 
-
 PyCharm already warns us that it cannot find the model, but let's run the unit test anyway. Of course, we get an import error. Let's create the model. Open the models.py file in the organizations folder and add the following code.
 
 ```python
@@ -530,14 +510,12 @@ class Organization(models.Model):
     name = models.CharField(max_length=250)
 ```
 
-
 PyCharm stops complaining, but what happens when we run the unit test? We get a programming error! We need to add the Organization model as a table to the database. Luckily, Django makes it really easy to do this via the terminal.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py makemigrations organizations
 (tutorial)macbook:tutorial carneyadmin$ python manage.py migrate organizations
 ```
-
 
 Our unit tests are still failing, but the programming error is taken care of. Let's make our test pass with minimal code.
 
@@ -552,7 +530,6 @@ def home_view(request):
         'organizations': list(Organization.objects.all())
     })
 ```
-
 
 That gets our unit tests passing. Organizations are being passed to the home page, but they are not being saved yet. Let's write another unit test to our create view.
 
@@ -569,7 +546,6 @@ class CreateViewTest(TestCase):
         self.assertEqual(organization.name, 'test')
 ```
 
-
 This test sends a post request to the create view with some data. The test then checks to make sure an organization is created and that it has the same name as the data sent. The unit test fails as expected. Let's write some code to make it pass.
 
 ```python
@@ -583,7 +559,6 @@ def create_view(request):
 
     return render(request, 'organizations/create.html')
 ```
-
 
 The unit tests pass. Let's try the functional tests. We're close, I can feel it. The functional test cannot find our organization, so we just need to adjust our home template.
 
@@ -605,14 +580,12 @@ The unit tests pass. Let's try the functional tests. We're close, I can feel it.
 </table>
 ```
 
-
 Our functional tests pass! Everything works! Let's commit our changes.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ git add .
 (tutorial)macbook:tutorial carneyadmin$ git commit -m "Added organization model. All tests passing."
 ```
-
 
 ## Refactoring Our Code
 
@@ -635,7 +608,6 @@ class CreateViewTest(models.Model):
         self.assertIsInstance(response.context['form'], OrganizationForm)
 ```
 
-
 As expected, the unit tests fail with an import error. Let's create the form. Add a new Python file forms.py to the organization folder and add the following code.
 
 ```python
@@ -646,7 +618,6 @@ from django import forms
 
 class OrganizationForm(forms.Form): pass
 ```
-
 
 The unit tests fail, but we don't get the import error. Add code to make the test pass.
 
@@ -681,7 +652,6 @@ class OrganizationFormTest(TestCase):
 
 ```
 
-
 Run the unit tests and see that one fails. We need to make the form use the Organization model. Adjust the Organization form like the following.
 
 ```python
@@ -694,7 +664,6 @@ class OrganizationForm(forms.ModelForm):
         model = Organization
 ```
 
-
 The unit test passes, however, you might see a warning regarding ModelForms. Fix the form to get rid of that warning.
 
 ```python
@@ -706,13 +675,11 @@ class OrganizationForm(forms.ModelForm):
         fields = ('name',)
 ```
 
-
 Return to our view unit tests. We need to replace the current logic, so that the form handles all of the data transfers. We need to add a couple of tests, but first let's install a new Python library.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ pip install mock
 ```
-
 
 Let's add a couple new unit tests for the create view.
 
@@ -746,7 +713,6 @@ class CreateViewTest(TestCase):
         self.assertTrue(mock_form.save.called)
 ```
 
-
 Let's break down our changes. Notice that we are using a different strategy for these tests. Instead of using the Django client, we are using the RequestFactory to manufacture a Django HttpRequest and passing it to the view itself. In these new tests, our goal is not to test the functionality of the forms. We only want to test that the view is interacting with the form in the way it should. Our focus is on the view. 
 
 Our first test is confirming that the request data is being passed to the form. Before, we handled the data ourselves, so now we want to make sure that the form is actually being given the chance to handle it instead. We do this by temporarily overwriting the real for with a fake form. The patch function does this and passes the fake form object to unit test to use. The only thing we need to know is that the form in our view is being called with the post parameters.
@@ -772,7 +738,6 @@ def create_view(request):
     })
 ```
 
-
 We adjust the create_view so that an empty form is created on every request, and the post data is passed to the form on a post request. We also add functionality to check that the form is valid and then to save it. The unit tests pass. Our last step is to adjust the create template, so that is uses the Django form to render the controls. We replace the hard-coded HTML with the form context.
 
 ```html
@@ -784,7 +749,6 @@ We adjust the create_view so that an empty form is created on every request, and
     <button id="submit" type="submit">Submit</button>
 </form>
 ```
-
 
 When we run the functional tests, we see that they fail. We need to add a placeholder attribute to the name field. Let's adjust our form.
 
@@ -802,14 +766,12 @@ class OrganizationForm(forms.ModelForm):
         }
 ```
 
-
 Both the functional tests and the unit tests are passing. We've successfully implemented forms in our project! Let's commit our code.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ git add .
 (tutorial)macbook:tutorial carneyadmin$ git commit -m "Replaced template and view code with forms."
 ```
-
 
 ### Making the Application Look Pretty
 
@@ -843,8 +805,7 @@ Our code is now more efficient. Using forms allows us to avoid having to edit th
 </html>
 ```
 
-
-We've added a <meta> element to control for the scaling that happens when a mobile device attempts to render a full page in the viewport. We've imported Bootstrap CSS and JS files and a jQuery dependency, and we've also opted to use a free Bootstrap theme to make our page look less generic. Within the body of the HTML, we've added a block template tag that can be overridden by templates that extend this base. Let's adjust the other templates.
+We've added a `<meta>` element to control for the scaling that happens when a mobile device attempts to render a full page in the viewport. We've imported Bootstrap CSS and JS files and a jQuery dependency, and we've also opted to use a free Bootstrap theme to make our page look less generic. Within the body of the HTML, we've added a block template tag that can be overridden by templates that extend this base. Let's adjust the other templates.
 
 ```html
 <!-- organizations/templates/organizations/home.html -->
@@ -887,7 +848,6 @@ We've added a <meta> element to control for the scaling that happens when a mobi
 {% endblock page-content %}
 ```
 
-
 We spruce up the home page so that everything fits in a nice panel in the center of the screen. The table has a more interesting look with the striped style.
 
 ```html
@@ -920,7 +880,6 @@ We spruce up the home page so that everything fits in a nice panel in the center
 {% endblock page-content %}
 ```
 
-
 We've given a similar treatment to the create template, putting the form into a panel. In order to get our form to render with Bootstrap styling, we have a couple options. Once choice is to use a third-party library like Crispy Forms. I've chosen to implement it manually, by adding a mixin to the form class.
 
 ```python
@@ -939,16 +898,12 @@ class BootstrapMixin(object):
 class OrganizationForm(BootstrapMixin, forms.ModelForm): ...
 ```
 
-
 Let's run all of our functional and unit tests one last time. They pass as expected. Let's visit our page and take a look. It's a lot prettier. Commit the visual changes to Git.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ git add .
 (tutorial)macbook:tutorial carneyadmin$ git commit -m "Made the templates prettier with Bootstrap."
 ```
-
-
- 
 
 Visit your website and try out the functionality. If you want to deploy your site or share it with others, make sure to add a remote Git repository and push your code. Also, freeze your requirements and include them in a document to make duplication of your virtual environment easier.
 
