@@ -73,25 +73,19 @@ If you examine your database in pgAdmin III, you should see 10 new tables. At th
 
 ## Beginning the Test-Driven Development Process
 
-Now that our project is initialized, we can begin to design our application. In general, our workflow will follow these steps:
+In general, the test-driven development workflow follows these steps:
 
-1. Wireframe a simple model of our feature.
-
+1. Wireframe a simple model of our application or feature.
 2. Write a story that narrates a user experience.
-
 3. Write a functional test that follows the actions taken in the user story.
+4. Write unit tests to evaluate the operability of low-level code.
+5. Write code that satisfies the tests.
 
-4. Write unit tests to test low-level code.
+These are the critical tenets of test-driven development:
 
-5. Refactor code.
-
-The following guidelines form the backbone of test-driven development:
-
-* Always write a failing test before you program any functional code!
-
-* Write the **minimum** amount of code necessary to make the test pass!
-
-* When the test passes, refactor the code, if necessary.
+* Always write a failing test before you program any functional code.
+* Write the **minimum** amount of code necessary to make a test pass.
+* When a test passes, restart the process or refactor the code if necessary.
 
 ### Wireframing Our Application
 
