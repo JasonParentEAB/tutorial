@@ -9,13 +9,13 @@ macbook:~ carneyadmin$ cd Projects
 macbook:Projects carneyadmin$
 ```
 
-Create a new Django project, _tutorial_, using the _django-admin.py_ utility, and change directories to the newly generated folder.
+Create a new Django project, _tutorial_, using the `django-admin.py` utility, and change directories to the newly generated folder.
 
 ```bash
 macbook:Projects carneyadmin$ django-admin.py startproject tutorial && cd tutorial
 ```
 
-Create a new virtual environment using the _virtualenvwrapper_ utility.
+Create a new virtual environment using the `virtualenvwrapper` utility.
 
 ```bash
 macbook:tutorial carneyadmin$ mkvirtualenv tutorial
@@ -38,7 +38,7 @@ Next, install the Psycopg Python database adapter, so that we can use PostgreSQL
 (tutorial)macbook:tutorial carneyadmin$ pip install psycopg2
 ```
 
-In PyCharm, open the _settings.py_ file in the _tutorial_ app directory. Change the _DATABASES_ attribute to use PostgreSQL instead of SQLite.
+In PyCharm, open the `settings.py` file in the _tutorial_ app directory. Change the `DATABASES` attribute to use PostgreSQL instead of SQLite.
 
 ```python
 # tutorial/settings.py
@@ -99,9 +99,11 @@ Use our wireframe to imagine how the typical user will interact with our applica
 
 ### Writing a Functional Test
 
-Our next step is to create a functional test that follows the actions narrated by the user story. Our functional test will leverage the Selenium library to virtually open a browser and interact with the components on the screen as if it were a human user. Functional tests are extremely helpful because they allow us to mimic the actual behavior of a real user, and their actions are consistent every time. We do not need to write exhaustive functional tests to address every single on-screen interaction and scenario. In fact, when developing an application, functional tests should be written the least of any test type. Aim to write functional tests that encompass the most popular and direct set of actions that a user is expected to follow. A separate team of QA testers should check the application for any uncaught bugs when the user deviates from the expected path.
+A functional test (acceptance test) follows the scenario laid out in a user story. It evaluates the system from the user's point of view. Functional tests are helpful because they allow us to mimic the behavior of a real user, and they can be repeated consistently over time. Do not write exhaustive functional tests that touch every possible interaction and cover every single outcome that can occur within a system. Instead, focus on the important aspects of a user experience, and write tests that encompass the most popular and direct set of actions that a user is expected to follow. In practice, a separate quality assurance (QA) team should evaluate the application for bugs.
 
-Let's implement functional tests in our Django project. Create a new Python directory called functional_tests in the tutorial project folder. Open the project's settings.py file and change the INSTALLED_APPS attribute as shown below.
+Leverage software like Selenium to drive the functional tests in Django. Selenium provides functionality that allows automated tests to interact with a browser in an authentic way. Examples include opening and closing browser windows, navigating to URLs, and interacting with on-screen components using mouse and keyboard events like a human user.
+
+Implement functional tests by creating a new Python directory called *functional_tests* in the tutorial project folder. Open the project's _settings.py_ file and change the `INSTALLED_APPS` attribute as shown below.
 
 ```python
 # tutorial/settings.py
@@ -122,15 +124,13 @@ LOCAL_APPS = (
 INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS
 ```
 
-
 Install the Selenium package in the terminal.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ pip install selenium
 ```
 
-
-Create a new Python file in the functional_tests folder and call it test_organizations. Set up a simple test case.
+Create a new Python file in the *functional_tests* folder and call it *test_organizations*. Set up a simple test case.
 
 ```python
 # functional_tests/test_organizations.py
@@ -148,15 +148,13 @@ class OrganizationsTest(LiveServerTestCase):
         self.browser.quit()
 ```
 
-
-When run, each test in this test suite will open a web browser, execute some behaviors and assertions, and then close the browser as the test completes. These steps form the basis of every functional test. Let's see what happens when we run our functional tests.
+In Django, functional tests extend the `django.test.LiveServerTestCase` class. Unlike the standard `TestCase`, the `LiveServerTestCase` starts a real development server that allows an automated test client like Selenium to operate within a browser. The `setUp()` method is run immediately before a test starts and the `tearDown()` method is run directly after the test completes. When run, each test will open a web browser, execute some behaviors, and then close the browser. Run the functional tests and pay attention to the output.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py test functional_tests
 ```
 
-
-The tests ran with no failures! We haven't actually programmed any tests yet, but at least we can see that the Django commands are running correctly. Let's create a runnable functional test using our user story. Notice how the text from the user story is broken into digestible instructions that guide our development.
+The functional tests run successfully with no failures. In fact, we have not actually programmed any tests yet. Create a functional test that follows that actions narrated by the user story. In the example below, the user story is broken into digestible instructions that guide our development.
 
 ```python
 # functional_tests/test_organizations.py
@@ -165,7 +163,7 @@ def test_new_organizations_are_shown_in_list(self):
     # John goes to the home page. 
     self.browser.get(self.live_server_url)
 
-    # He sees an empty table with a single cell that says 'No organizations'. 
+    # He sees a data table with a single cell that says "No organizations".
     # He also sees a button labelled 'Create organization'. He clicks the create button. 
     cell = self.browser.find_element_by_xpath('//table/tbody/tr/td')
     self.assertEqual(cell.text, 'No organizations')
@@ -173,7 +171,7 @@ def test_new_organizations_are_shown_in_list(self):
     self.assertEqual(create_button.text, 'Create organization')
     create_button.click()
 
-    # The page refreshes and John sees a form with a single input: name. 
+    # The page refreshes and John sees a form with a single text input control and a submit button.
     name_input = self.browser.find_element_by_name('name')
     self.assertEqual(name_input.get_attribute('placeholder'), 'Organization name')
 
@@ -183,35 +181,28 @@ def test_new_organizations_are_shown_in_list(self):
     self.assertEqual(submit_button.text, 'Submit')
     submit_button.click()
 
-    # The page refreshes and John notices that the table now has a single row with 
+    # The page refreshes and John notices that the table now has a single row containing 
     # the details of the organization that he added.
     row = self.browser.find_element_by_xpath('//table/tbody/tr')
     self.assertIn('TDD Organization', row.text)
 ```
 
-
-Our functional test is pretty simple: 14 lines of code and 5 assertions. Selenium gives us some pretty useful methods to interact with the elements on the page. Let's quickly walkthrough what's happening in this test:
+Our functional test is pretty simple: 14 lines of code and 5 assertions. Every test method begins with the prefix `test_`. Selenium provides some pretty useful methods to interact with the elements on the page. Walk through what is happening in the test:
 
 * The home page opens in the browser.
+* The browser searches the HTML content for a `<td>` element and checks to make sure it says "No organizations".
+* The browser searches the HTML content for a create button, then click its.
+* At this point, the client should navigate to a new page. When it refreshes, the browser checks the HTML content for a text input control and a submit button. It also confirms that the text field has a placeholder that says "Organization name".
+* The browser enters an organization name into the text field and clicks the submit button.
+* At this point, the client should return to the home page and the browser checks to make sure the table contains a row with the name of the organization added on the previous page.
 
-* The HTML content is searched for a <td> element and we check to make sure it says "No organizations".
-
-* The HTML content is searched for the create button. We check to make sure it exists and then we click it.
-
-* We expect the browser to navigate to a new page. When it refreshes, we check for the form elements, a text input control and a submit button. We also confirm that the text field has a placeholder that says "Organization name".
-
-* We enter an organization name into the text field and submit the form.
-
-* At this point, we expect the browser to return to the home page and we check to make sure our table contains a row with the name of our organization.
-
-Notice how this test function covers the narrative of the user story and uses the elements drawn out in the wireframe. Let's run the unit test again and see what happens.
+Notice how this test combines the user story and the wireframe. Run the functional test again and see what happens.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py test functional_tests
 ```
 
-
-You should see a web browser open, wait 5 seconds, and then close with a failure. This is good! In fact, our tests should always initially fail. Now, we begin the process of making the test pass. Notice that the test failed with the message "Unable to locate element". It cannot find the <td> element in the rendered HTML. You might have also observed that the web page itself could not be found when it opened in the browser. In order to address these failures we need to write our first unit test!
+A web browser opens, waits 5 seconds, and then closes with a failure. This is good! In fact, tests should always initially fail. Notice that the test failed with the message "Unable to locate element". It cannot find the `<td>` element in the rendered HTML. You might have also observed that the web page itself could not be found when it opened in the browser. In order to address these failures we need to write our first unit test.
 
 ### Writing a Unit Test
 
