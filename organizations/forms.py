@@ -7,7 +7,17 @@ from django import forms
 from .models import Organization
 
 
-class OrganizationForm(forms.ModelForm):
+class BootstrapMixin(object):
+    def __init__(self, *args, **kwargs):
+        super(BootstrapMixin, self).__init__(*args, **kwargs)
+
+        for key in self.fields:
+            self.fields[key].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+
+class OrganizationForm(BootstrapMixin, forms.ModelForm):
     class Meta:
         model = Organization
         fields = ('name',)
