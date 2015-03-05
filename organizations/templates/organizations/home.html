@@ -7,6 +7,21 @@
     <title>Tutorial</title>
 </head>
 
-<body></body>
+<body>
+    <a id="create-button" href="{% url 'create' %}">Create organization</a>
+    <table>
+        <tbody>
+            {% for organization in organizations %}
+                <tr>
+                    <td>{{ organization.name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>No organizations</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
 
 </html>

@@ -1,3 +1,8 @@
+__author__ = 'jason.parent@carneylabs.com (Jason Parent)'
+
+# Django imports...
 from django.db import models
 
-# Create your models here.
+
+class Organization(models.Model):
+    name = models.CharField(max_length=250)

@@ -6,4 +6,5 @@ from django.conf.urls import url
 
 urlpatterns = patterns('organizations.views',
     url(r'^$', 'home_view', name='home'),
+    url(r'^create/$', 'create_view', name='create'),
 )
