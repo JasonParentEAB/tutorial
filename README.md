@@ -89,13 +89,13 @@ These are the critical tenets of test-driven development:
 
 ### Wireframing Our Application
 
-Our application is going to be a simple two-screen program that allows users to create and view a list of organizations. I've created a wireframe in MockFlow. (See attachment)
+Our application will consist of two pages, a _home page_ that lists organizations and a _create page_ that generates new organizations. Sketch a simple layout of the application and make sure to include components and page states. See the attached document for an example of an application wireframe created with MockFlow.
 
 ### Writing Our User Story
 
-Using our wireframes, let's imagine how the typical user is going to interact with our application. Here's a general outline of our expected user experience:
+Use our wireframe to imagine how the typical user will interact with our application. Follow along with this outline of an expected user experience:
 
-John goes to the home page. He sees an empty table with a single cell that says 'No organizations'. He also sees a button labelled 'Create organization'. He clicks the create button. The page refreshes and John sees a form with a single input: name. John enters an organization name and clicks the submit button. The page refreshes and John notices that the table now has a single row with the details of the organization that he added.
+> John goes to the home page. He sees a data table with a single cell that says "No organizations". He also sees a button labelled "Create organization". He clicks the create button. The page refreshes and John sees a form with a single text input control and a submit button. John enters an organization name and clicks the submit button. The page refreshes and John notices that the table now has a single row containing the details of the organization that he added.
 
 ### Writing a Functional Test
 
