@@ -2,48 +2,43 @@
 
 ## Initializing the Test Project
 
-Begin by starting a new project. Open your terminal and navigate to a folder that holds your Django projects. On my computer, this is a directory called Projects.
+Open your terminal and navigate to the directory that contains your Django projects. On my computer, that folder is called Projects.
 
 ```bash
 macbook:~ carneyadmin$ cd Projects
 macbook:Projects carneyadmin$
 ```
 
-
-Create the tutorial project using the django-admin.py utility and change directories to the newly created folder.
+Create a new Django project, _tutorial_, using the _django-admin.py_ utility, and change directories to the newly generated folder.
 
 ```bash
 macbook:Projects carneyadmin$ django-admin.py startproject tutorial && cd tutorial
 ```
 
-
-Create a new virtual environment using the virtualenvwrapper utility.
+Create a new virtual environment using the _virtualenvwrapper_ utility.
 
 ```bash
 macbook:tutorial carneyadmin$ mkvirtualenv tutorial
 (tutorial)macbook:tutorial carneyadmin$
 ```
 
+Start PyCharm and click File > Open in the menu bar. Find and select the _tutorial_ project folder. When prompted, choose to open the project in a new window. Wait for the project to open and then click PyCharm > Preferences > Project Interpreter in the menu bar to open the Project Interpreter panel. Click the gear icon in the upper right corner of the panel; then, select the "Add local..." option. In file explorer, navigate to your virtual environments folder, find the _tutorial_ directory, and select the _python2.7_ file in the _bin_ folder. On my machine, this file is located at _~/Virtualenvs/tutorial/bin_. In PyCharm, close the Preferences window. The virtual environment you just added is now being used by PyCharm for the _tutorial_ project.
 
-In PyCharm, click File > Open in the menu bar. Then, select the tutorial project folder and click Choose. Open the project in a new window. When the project opens, click PyCharm > Preferences > Project Interpreter in the menu bar, which should open the Project Interpreter panel. Click the gear icon in the upper right corner of the panel. Then, click "Add local…" Navigate to your virtual environments folder, find the tutorial directory, and select the file python2.7 from the bin folder. Mine is located at ~/Virtualenvs/tutorial/bin. In PyCharm, click OK to close the Preferences window. The virtual environment you just added is now being used for the tutorial project. You may notice a little red X in the run configuration. This will disappear once we add our dependencies.
-
-The next step is to install our project dependencies into our virtual environment. First, let's install Django.
+Now that we have installed our virtual environment, we must add some dependencies to our project. First, install Django.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ pip install django
 ```
 
+Return to PyCharm and run the Django project by selecting Run from the menu bar. PyCharm should start the development server and log the progress in a terminal window. Click the link that PyCharm provides and your browser should open to a default Django page that reads "It worked!"
 
-In PyCharm, notice that the little red X has disappeared from the run configuration. Click the run button on the right. The PyCharm terminal spits out some information. The project is running! Click the link to the development server. The link opens in a new browser window with a message "It worked!"
-
-Next, we're going to install a Python module that allows us to use PostgreSQL as our database.
+Next, install the Psycopg Python database adapter, so that we can use PostgreSQL as our database.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ pip install psycopg2
 ```
 
-
-In PyCharm, navigate to the settings.py file in the tutorial app directory. Change the DATABASES attribute to the following.
+In PyCharm, open the _settings.py_ file in the _tutorial_ app directory. Change the _DATABASES_ attribute to use PostgreSQL instead of SQLite.
 
 ```python
 # tutorial/settings.py
@@ -60,23 +55,21 @@ DATABASES = {
 }
 ```
 
+Start the pgAdmin III program, and create a new database called _tutorial_. In the window that appears, enter _tutorial_ in the name field and _carneyadmin_ in the owner field. Close the window and then find the newly created database. Notice it does not have any tables yet.
 
-Next, open your pgAdmin III program, and create a new database called tutorial. Do this by opening the server, selecting the Databases directory, and then clicking Edit > New Object > New Database… in the menu bar. In the window that appears, enter tutorial in the Name field and carneyadmin in the Owner field. Click OK and find your new created database. Notice it doesn't have any tables yet.
-
-Return to PyCharm. Delete the db.sqlite3 file from your project if it exists. Next, create the default Django tables using the terminal.
+Return to PyCharm and delete the _db.sqlite3_ file that was created when you ran the Django project initially. Migrate the database to create the default Django tables.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py migrate
 ```
 
-
-If you check your database in pgAdmin III, you should see 10 new tables. At this point, we're ready to make start tracking our file changes using Git. Initialize a Git repository and commit everything we've done so far.
+If you examine your database in pgAdmin III, you should see 10 new tables. At this point, we are ready to start tracking our file changes using Git. Initialize a Git repository and commit all of the file changes that we have done up to this point.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ git init
-(tutorial)macbook:tutorial carneyadmin$ git commit -am "Initial commit."
+(tutorial)macbook:tutorial carneyadmin$ git add .
+(tutorial)macbook:tutorial carneyadmin$ git commit -m "Initial commit."
 ```
-
 
 ## Beginning the Test-Driven Development Process
 
