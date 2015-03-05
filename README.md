@@ -215,13 +215,13 @@ A web browser opens, waits 5 seconds, and then closes with a failure. This is go
 
 While a functional test mimics a real user interacting with an application, a unit test ensures that the functionality of the bits of code themselves work as expected. Our web application failed to load because we don't have anything to load yet. We're missing the fundamental elements of a Django web application: URLs, views, and templates.
 
-Let's create a new Django app called organizations. We're creating a new app instead of using the default project app in reaction to the guidelines laid out by the creators of Django. The idea is that Django apps should be autonomous from the project, so that they can be packaged and distributed easily as individual modules.
+Let's create a new Django app called *organizations*. We're creating a new app instead of using the default project app in reaction to the guidelines laid out by the creators of Django. The idea is that Django apps should be autonomous from the project, so that they can be packaged and distributed easily as individual modules.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py startapp organizations
 ```
 
-You'll notice that your Django project is updated in PyCharm. Open your project settings and add organizations as an installed local app. This action configures and registers the module with Django, so that the URLs, views, forms, models, etc. are accessible throughout the project.
+You'll notice that your Django project is updated in PyCharm. Open your project *settings.py* and add `organizations` as an installed local app. This action configures and registers the module with Django, so that the URLs, views, forms, models, etc. are accessible throughout the project.
 
 ```python
 # tutorial/settings.py
@@ -232,7 +232,7 @@ LOCAL_APPS = (
 )
 ```
 
-Inside the organizations folder, delete the tests.py file and create a Python directory called tests. Create a new Python file called test_views and place it in the tests folder. This is where our unit tests will live. Add the code shown below to create a unit test class for our views.
+Inside the *organizations* folder, delete the *tests.py* file and create a Python directory called tests. Create a new Python file called *test_views* and place it in the *tests* folder. This is where our unit tests will live. Add the code shown below to create a unit test class for our views.
 
 ```python
 # organizations/tests/test_views.py
@@ -273,7 +273,7 @@ def test_view_renders_template(self):
     self.assertTemplateUsed(response, 'organizations/home.html')
 ```
 
-In this test, we are simulating a call to the home page and are confirming that we are rendering the expected template. When we run the unit tests, they fail. Remember that's a good thing! Now, let's write the minimum amount of code necessary to make this test pass. The first thing we need is a template. Create a templates/organizations directory in your organizations folder. Create a simple HTML file in the new directory and name it home.
+In this test, we are simulating a call to the home page and are confirming that we are rendering the expected template. When we run the unit tests, they fail. Remember that's a good thing! Now, let's write the minimum amount of code necessary to make this test pass. The first thing we need is a template. Create a *templates/organizations* directory in your organizations folder. Create a simple HTML file in the new directory and name it *home.html*.
 
 ```html
 <!-- organizations/templates/organizations/home.html -->
@@ -292,7 +292,7 @@ In this test, we are simulating a call to the home page and are confirming that 
 </html>
 ```
 
-Next, open the views.py file from the organizations folder. Add the minimum amount of code necessary to render the template.
+Next, open the *views.py* file from the *organizations* folder. Add the minimum amount of code necessary to render the template.
 
 ```python
 # organizations/views.py
@@ -301,7 +301,7 @@ def home_view(request):
     return render(request, 'organizations/home.html')
 ```
 
-Lastly, open the urls.py folder in the tutorial folder and adjust the URL configuration as shown.
+Lastly, open the *urls.py* file in the *tutorial* folder and adjust the URL configuration as shown.
 
 ```python
 # tutorial/urls.py
@@ -369,8 +369,7 @@ class CreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'organizations/create.html')
 ```
 
-
-Next, we follow the same steps for creating the URL, view, and template as we did for the home page. Create a new HTML file in the organization templates folder called create.
+Next, we follow the same steps for creating the URL, view, and template as we did for the home page. Create a new HTML file in the *templates/organizations* folder called *create.html*.
 
 ```html
 <!-- organizations/templates/organizations/create.html -->
@@ -409,7 +408,7 @@ urlpatterns = patterns('organizations.views',
 )
 ```
 
-Run the unit tests. They passed! Now that we have a working web page, we can link to it in the home template.
+Run the unit tests. They passed! Now that we have a working web page, we can link to it in the *home.html* template.
 
 ```html
 <!-- organizations/templates/organizations/create.html -->
@@ -498,7 +497,7 @@ class HomeViewTest(TestCase):
         self.assertListEqual(response.context['organizations'], [organization])
 ```
 
-PyCharm already warns us that it cannot find the model, but let's run the unit test anyway. Of course, we get an import error. Let's create the model. Open the models.py file in the organizations folder and add the following code.
+PyCharm already warns us that it cannot find the model, but let's run the unit test anyway. Of course, we get an import error. Let's create the model. Open the *models.py* file in the *organizations* folder and add the following code.
 
 ```python
 # organization/models.py
@@ -510,7 +509,7 @@ class Organization(models.Model):
     name = models.CharField(max_length=250)
 ```
 
-PyCharm stops complaining, but what happens when we run the unit test? We get a programming error! We need to add the Organization model as a table to the database. Luckily, Django makes it really easy to do this via the terminal.
+PyCharm stops complaining, but what happens when we run the unit test? We get a programming error! We need to add the `Organization` model as a table to the database. Luckily, Django makes it really easy to do this via the terminal.
 
 ```bash
 (tutorial)macbook:tutorial carneyadmin$ python manage.py makemigrations organizations
@@ -608,7 +607,7 @@ class CreateViewTest(models.Model):
         self.assertIsInstance(response.context['form'], OrganizationForm)
 ```
 
-As expected, the unit tests fail with an import error. Let's create the form. Add a new Python file forms.py to the organization folder and add the following code.
+As expected, the unit tests fail with an import error. Let's create the form. Add a new Python file *forms.py* to the *organizations* folder and add the following code.
 
 ```python
 # organizations/forms.py
@@ -635,8 +634,7 @@ def create_view(request):
     })
 ```
 
-
-The unit test passes. Let's test the form to make sure that it renders the controls we want. Create a new Python file in the organization/tests directory and call it test_forms.py. Add a test that checks to see if the text input control is present.
+The unit test passes. Let's test the form to make sure that it renders the controls we want. Create a new Python file in the *organizations/tests* directory and call it *test_forms.py*. Add a test that checks to see if the text input control is present.
 
 ```python
 # organizations/tests/test_forms.py
@@ -652,7 +650,7 @@ class OrganizationFormTest(TestCase):
 
 ```
 
-Run the unit tests and see that one fails. We need to make the form use the Organization model. Adjust the Organization form like the following.
+Run the unit tests and see that one fails. We need to make the form use the `Organization` model. Adjust the `OrganizationForm` like the following.
 
 ```python
 # organizations/forms.py
@@ -664,7 +662,7 @@ class OrganizationForm(forms.ModelForm):
         model = Organization
 ```
 
-The unit test passes, however, you might see a warning regarding ModelForms. Fix the form to get rid of that warning.
+The unit test passes, however, you might see a warning regarding `ModelForm`s. Fix the form to get rid of that warning.
 
 ```python
 # organizations/forms.py
@@ -713,11 +711,11 @@ class CreateViewTest(TestCase):
         self.assertTrue(mock_form.save.called)
 ```
 
-Let's break down our changes. Notice that we are using a different strategy for these tests. Instead of using the Django client, we are using the RequestFactory to manufacture a Django HttpRequest and passing it to the view itself. In these new tests, our goal is not to test the functionality of the forms. We only want to test that the view is interacting with the form in the way it should. Our focus is on the view. 
+Let's break down our changes. Notice that we are using a different strategy for these tests. Instead of using the Django client, we are using the `RequestFactory` to manufacture a Django `HttpRequest` and passing it to the view itself. In these new tests, our goal is not to test the functionality of the forms. We only want to test that the view is interacting with the form in the way it should. Our focus is on the view. 
 
 Our first test is confirming that the request data is being passed to the form. Before, we handled the data ourselves, so now we want to make sure that the form is actually being given the chance to handle it instead. We do this by temporarily overwriting the real for with a fake form. The patch function does this and passes the fake form object to unit test to use. The only thing we need to know is that the form in our view is being called with the post parameters.
 
-Our second test requires a little more work. Again, we are mocking the form with a fake object, but this time, we have to add some fake functions to reflect the structure of the real form. When a form is used in a view, it has to validate the input and then save, in order to successfully create a new model object. In this unit test, we are mocking the is_valid and save methods, so that they operate the way we expect them to. We are then checking to make sure that the save function is called on the form.
+Our second test requires a little more work. Again, we are mocking the form with a fake object, but this time, we have to add some fake functions to reflect the structure of the real form. When a form is used in a view, it has to validate the input and then save, in order to successfully create a new model object. In this unit test, we are mocking the `is_valid()` and `save()` methods, so that they operate the way we expect them to. We are then checking to make sure that the save function is called on the form.
 
 The unit tests fail as expected. Let's add the code to make them pass.
 
@@ -738,7 +736,7 @@ def create_view(request):
     })
 ```
 
-We adjust the create_view so that an empty form is created on every request, and the post data is passed to the form on a post request. We also add functionality to check that the form is valid and then to save it. The unit tests pass. Our last step is to adjust the create template, so that is uses the Django form to render the controls. We replace the hard-coded HTML with the form context.
+We adjust the `create_view()` so that an empty form is created on every request, and the post data is passed to the form on a post request. We also add functionality to check that the form is valid and then to save it. The unit tests pass. Our last step is to adjust the create template, so that is uses the Django form to render the controls. We replace the hard-coded HTML with the form context.
 
 ```html
 <!-- organizations/templates/organizations/create.html -->
@@ -775,7 +773,7 @@ Both the functional tests and the unit tests are passing. We've successfully imp
 
 ### Making the Application Look Pretty
 
-Our code is now more efficient. Using forms allows us to avoid having to edit the template and the view every time we add more fields to the form. The code is solid, but the application still looks ugly. Let's spruce it up using Bootstrap components and styles. While we're at it, let's make a base template that the home and create templates can inherit from, so we avoid duplicate code. Create a new HTML file in the organizations templates files and name it base.
+Our code is now more efficient. Using forms allows us to avoid having to edit the template and the view every time we add more fields to the form. The code is solid, but the application still looks ugly. Let's spruce it up using Bootstrap components and styles. While we're at it, let's make a base template that the home and create templates can inherit from, so we avoid duplicate code. Create a new HTML file in the *templates/organizations* folder and name it *base.html*.
 
 ```html
 <!-- organizations/templates/organizations/base.html -->
